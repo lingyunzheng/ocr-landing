@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Local OCR - Privacy-First Text Recognition. 100% offline, no data upload.">
+    <title>Local OCR - Privacy-First Text Recognition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation / Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        nav a {
+            color: #666;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px 60px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .hero .subheadline {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* App Preview */
+        .app-preview {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 60px;
+        }
+
+        .app-preview h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .screenshot-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .screenshot {
+            width: 200px;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screenshot::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="rgba(255,255,255,0.2)"/></pattern></defs><rect width="200" height="400" fill="url(%23dots)"/></svg>');
+            pointer-events: none;
+        }
+
+        .screenshot-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .screenshot-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* CTA Button */
+        .cta-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px);
+        }
+
+        .cta-subtitle {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 60px;
+        }
+
+        .benefits h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .benefit-item-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .benefit-item-text h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .benefit-item-text p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero .subheadline {
+                font-size: 18px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshot-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-button {
+                padding: 15px 40px;
+                font-size: 16px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero, .features, .app-preview, .benefits, .cta-section {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature {
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">📱</span>
+                <span>Local OCR</span>
+            </div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#beta">Beta</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Local OCR</h1>
+        <h2 style="font-size: 28px; color: #667eea; font-weight: 600; margin-bottom: 20px;">Privacy-First Text Recognition</h2>
+        <p class="subheadline">100% offline. Your data never leaves your phone.</p>
+        <p style="font-size: 16px; color: #666; max-width: 600px; margin: 0 auto;">
+            Recognize text instantly without uploading anything to the cloud. Fast, accurate, and completely private.
+        </p>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="hero">
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Process images in under 1 second with optimized AI models</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Multi-Language Support</h3>
+                    <p>Recognize text in multiple languages instantly</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>100% Offline</h3>
+                    <p>Works without internet connection - your privacy is guaranteed</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✨</div>
+                    <h3>High Accuracy</h3>
+                    <p>Powered by advanced AI for precise text recognition</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Preview Section -->
+    <section class="app-preview">
+        <div class="hero">
+            <h2>See It In Action</h2>
+            <div class="screenshot-container">
+                <div class="screenshot">
+                    <div class="screenshot-content">
+                        <div style="font-size: 24px; margin-bottom: 20px;">📸</div>
+                        <div class="screenshot-label">Scan Document</div>
+                    </div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-content">
+                        <div style="font-size: 24px; margin-bottom: 20px;">⚡</div>
+                        <div class="screenshot-label">Instant Recognition</div>
+                    </div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-content">
+                        <div style="font-size: 24px; margin-bottom: 20px;">💾</div>
+                        <div class="screenshot-label">Save & Share</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="hero">
+            <h2>Why Choose Local OCR?</h2>
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <div class="benefit-item-icon">🛡️</div>
+                    <div class="benefit-item-text">
+                        <h4>Complete Privacy</h4>
+                        <p>No data collection, no tracking, no ads. Your photos stay on your device.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-item-icon">⚙️</div>
+                    <div class="benefit-item-text">
+                        <h4>No Internet Required</h4>
+                        <p>Use anywhere, anytime. Works in airplane mode or offline areas.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-item-icon">💪</div>
+                    <div class="benefit-item-text">
+                        <h4>Lightweight & Fast</h4>
+                        <p>Minimal resource usage. Optimized for all Android devices.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-item-icon">🔄</div>
+                    <div class="benefit-item-text">
+                        <h4>Always Updated</h4>
+                        <p>Continuous improvements and new language support as an early tester.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="beta" class="cta-section">
+        <div class="hero">
+            <h2 style="font-size: 32px; color: #2c3e50; margin-bottom: 30px;">
+                Join Our Beta Testing Program
+            </h2>
+            <p style="font-size: 16px; color: #666; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Be among the first to experience Local OCR. Your feedback will directly shape the app's future features and improvements.
+            </p>
+            <a href="https://play.google.com/apps/testing/com.localai.ocr" class="cta-button">
+                🎯 Join Beta Testing Now
+            </a>
+            <span class="cta-subtitle">Early testers will be credited as founders in the app</span>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="app-preview">
+        <div class="hero">
+            <h2>Frequently Asked Questions</h2>
+            <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px;">📱 Does it really work offline?</h4>
+                    <p style="color: #666; font-size: 14px;">Yes! 100% offline. All processing happens on your device. No internet connection needed.</p>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px;">🔒 Is my data safe?</h4>
+                    <p style="color: #666; font-size: 14px;">Completely safe. We never upload, store, or see any of your images or recognized text.</p>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px;">💰 Is it free?</h4>
+                    <p style="color: #666; font-size: 14px;">Yes! Early beta testers get lifetime premium access as a thank you for helping us improve.</p>
+                </div>
+                <div>
+                    <h4 style="color: #2c3e50; margin-bottom: 8px;">📧 How do I join?</h4>
+                    <p style="color: #666; font-size: 14px;">Click the "Join Beta Testing" button above and follow the link to Google Play. It's that simple!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <p>&copy; 2025 Local OCR. All rights reserved.</p>
+            <p style="font-size: 13px; color: #bdc3c7; margin-top: 15px;">
+                Made with ❤️ by Privacy-First Developers
+            </p>
+            <div class="footer-links">
+                <a href="https://github.com/lingyunzheng">🐙 GitHub</a>
+                <a href="https://play.google.com/apps/testing/com.localai.ocr">📱 Google Play Beta</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
